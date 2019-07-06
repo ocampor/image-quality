@@ -1,2 +1,2 @@
-recursive-include models *
+recursive-include image-quality/models *
 
