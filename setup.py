@@ -3,13 +3,9 @@ from distutils.core import setup
 setup(
     name='image-quality',
     packages=['image-quality'],
-    version='0.1.0-a0',
+    version='0.1.1-a0',
     license='Apache 2.0',
-    description="""
-    ## Project Description
-    
-    Image Quality is an open source software library for Automatic Image Quality Assessment (IQA). 
-    """,
+    description='Image quality is an open source software library for Automatic Image Quality Assessment (IQA).',
     author='Ricardo Ocampo',
     author_email='me@ocampor.ai',
     url='https://github.com/ocampor/image-quality',
