@@ -27,7 +27,7 @@ setup(
         'Intended Audience :: Developers',
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
         'Topic :: Scientific/Engineering :: Image Recognition',
-        'License :: OSI Approved :: Apache 2.0',
+        'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 3.7',
     ],
     include_package_data=True
