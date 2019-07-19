@@ -2,7 +2,10 @@ version: '3.6'
 
 services:
   image-quality:
-    image: ocampor/image-quality
+    image: ocampor/image-quality:${VERSION}
     build:
       context: .
       dockerfile: docker/Dockerfile
+      args:
+        PYTHON_DOCKER_VERSION: ${PYTHON_DOCKER_VERSION}
+        VERSION: ${VERSION}

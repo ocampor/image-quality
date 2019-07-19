@@ -1,8 +1,11 @@
-ARG PYTHON_DOCKER_VERSION=3.7.4-slim
+ARG PYTHON_DOCKER_VERSION
 
 FROM python:${PYTHON_DOCKER_VERSION}
+
+ARG VERSION
+ENV VERSION ${VERSION}
 
 COPY . /src
 WORKDIR /src
 
-RUN pip install -e /src
+RUN pip install -e /src[dev]

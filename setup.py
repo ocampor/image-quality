@@ -1,9 +1,12 @@
+import os
 from distutils.core import setup
+
+VERSION = os.getenv('VERSION')
 
 setup(
     name='image-quality',
     packages=['imquality'],
-    version='1.0.0-a0',
+    version=VERSION,
     license='Apache 2.0',
     description='Image quality is an open source software library for Automatic Image Quality Assessment (IQA).',
     author='Ricardo Ocampo',
@@ -18,6 +21,13 @@ setup(
         'opencv-python==4.1.0.25',
         'scikit-image==0.15.0',
     ],
+    extras_require={
+        'dev': [
+            'pytest',
+            'pytest-pep8',
+            'pytest-cov'
+        ]
+    },
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
