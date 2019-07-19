@@ -7,5 +7,5 @@ services:
       context: .
       dockerfile: docker/Dockerfile
       args:
-        PYTHON_DOCKER_VERSION: ${PYTHON_DOCKER_VERSION}
+        PYTHON_DOCKER_VERSION: 3.7.4-slim
         VERSION: ${VERSION}
