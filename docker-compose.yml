@@ -1,0 +1,8 @@
+version: '3.6'
+
+services:
+  image-quality:
+    image: ocampor/image-quality
+    build:
+      context: .
+      dockerfile: docker/Dockerfile

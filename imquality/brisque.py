@@ -17,65 +17,18 @@ RESOURCES_PATH = os.path.dirname(os.path.abspath(__file__))
 RESOURCES_PATH = os.path.join(RESOURCES_PATH, 'resources')
 
 
-class AssymmetricGeneralizedGaussian:
-    def estimate_phi(self, alpha):
-        numerator = scipy.special.gamma(2 / alpha) ** 2
-        denominator = scipy.special.gamma(1 / alpha) * scipy.special.gamma(3 / alpha)
-        return numerator / denominator
-
-    def estimate_r_hat(self, x):
-        size = numpy.prod(x.shape)
-        return (numpy.sum(numpy.abs(x)) / size) ** 2 / (numpy.sum(x ** 2) / size)
-
-    def estimate_R_hat(self, r_hat, gamma):
-        numerator = (gamma ** 3 + 1) * (gamma + 1)
-        denominator = (gamma ** 2 + 1) ** 2
-        return r_hat * numerator / denominator
-
-    def mean_squares_sum(self, x, filter=lambda z: z == z):
-        filtered_values = x[filter(x)]
-        squares_sum = numpy.sum(filtered_values ** 2)
-        return squares_sum / (filtered_values.shape)
-
-    def estimate_gamma(self, x):
-        left_squares = self.mean_squares_sum(x, lambda z: z < 0)
-        right_squares = self.mean_squares_sum(x, lambda z: z >= 0)
-
-        return numpy.sqrt(left_squares) / numpy.sqrt(right_squares)
-
-    def estimate_alpha(self, x):
-        r_hat = self.estimate_r_hat(x)
-        gamma = self.estimate_gamma(x)
-        R_hat = self.estimate_R_hat(r_hat, gamma)
-
-        solution = scipy.optimize.root(lambda z: self.estimate_phi(z) - R_hat, [0.2]).x
-
-        return solution[0]
-
-    def estimate_sigma(self, x, filter=lambda z: z < 0):
-        return numpy.sqrt(self.mean_squares_sum(x, filter))
-
-    def estimate_mean(self, alpha, sigma_l, sigma_r, constant):
-        return (sigma_r - sigma_l) * constant * (scipy.special.gamma(2 / alpha) / scipy.special.gamma(1 / alpha))
-
-    def fit(self, x):
-        alpha = self.estimate_alpha(x)
-        sigma_l = self.estimate_sigma(x, alpha, lambda z: z < 0)
-        sigma_r = self.estimate_sigma(x, alpha, lambda z: z >= 0)
-
-        constant = numpy.sqrt(scipy.special.gamma(1 / alpha) / scipy.special.gamma(3 / alpha))
-        mean = self.estimate_mean(alpha, sigma_l, sigma_r, constant)
-
-        return alpha, mean, sigma_l, sigma_r
-
-
 class Brisque:
     def __init__(self, image: PIL.Image):
         self.image = numpy.asarray(image)
         self.sigma = 7 / 6
         self.kernel_size = 7
         self.gray_image = skimage.color.rgb2gray(self.image)
-        self.downscaled_image = cv2.resize(self.gray_image, None, fx=1 / 2, fy=1 / 2, interpolation=cv2.INTER_CUBIC)
+        self.downscaled_image = cv2.resize(
+            self.gray_image,
+            None,
+            fx=1 / 2,
+            fy=1 / 2,
+            interpolation=cv2.INTER_CUBIC)
 
     def normalize_kernel(self, kernel):
         return kernel / numpy.sum(kernel)

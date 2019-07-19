@@ -2,8 +2,8 @@ from distutils.core import setup
 
 setup(
     name='image-quality',
-    packages=['image-quality'],
-    version='0.1.1-a0',
+    packages=['imquality'],
+    version='1.0.0-a0',
     license='Apache 2.0',
     description='Image quality is an open source software library for Automatic Image Quality Assessment (IQA).',
     author='Ricardo Ocampo',
@@ -13,10 +13,10 @@ setup(
     keywords=['image', 'quality', 'reference', 'reference-less'],
     install_requires=[
         'Pillow==5.2.0',
-        'numpy==1.15.1',
-        'scipy==1.1.0',
-        'opencv-python==3.4.2.17',
-        'scikit-image==0.14.0',
+        'numpy==1.16.4',
+        'scipy==1.3.0',
+        'opencv-python==4.1.0.25',
+        'scikit-image==0.15.0',
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
