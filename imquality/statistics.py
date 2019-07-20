@@ -1,43 +1,76 @@
+from __future__ import annotations
+from enum import Enum
+from typing import Callable
+
 import numpy
 import scipy.optimize
 import scipy.special
 
 
+class DistributionSide(Enum):
+    right = 1
+    left = 2
+
+
+def find_root(fun: Callable, x0: float = 0.2) -> scipy.optimize.OptimizeResult:
+    x0 = numpy.array([x0])
+    return scipy.optimize.root(fun, x0)
+
+
 class AsymmetricGeneralizedGaussian:
-    def __init__(self, x: numpy.array):
+    def __init__(self, x: numpy.ndarray):
+        assert isinstance(x, numpy.ndarray)
+
         self.x = x
         self._alpha = None
 
+    def _x(self, side: DistributionSide):
+        if side == DistributionSide.left:
+            idx = numpy.where(self.x < 0)
+        elif side == DistributionSide.right:
+            idx = numpy.where(self.x >= 0)
+        else:
+            raise ValueError('Side {0} was not recognized'.format(side))
+
+        return self.x[idx]
+
+    @property
+    def x_left(self):
+        return self._x(DistributionSide.left)
+
+    @property
+    def x_right(self):
+        return self._x(DistributionSide.right)
+
+    def _sigma(self, side: DistributionSide):
+        if side == DistributionSide.right:
+            _x = self.x_right
+        elif side == DistributionSide.left:
+            _x = self.x_left
+        else:
+            raise ValueError('Side {0} was not recognized'.format(side))
+
+        return numpy.sqrt(self.mean_squares(_x))
+
+    @property
+    def sigma_left(self):
+        return self._sigma(DistributionSide.left)
+
+    @property
+    def sigma_right(self):
+        return self._sigma(DistributionSide.right)
+
     @property
     def gamma(self):
-        left_squares = self.mean_squares(numpy.where(self.x < 0))
-        right_squares = self.mean_squares(numpy.where(self.x >= 0))
-        return numpy.sqrt(left_squares) / numpy.sqrt(right_squares)
+        return self.sigma_left / self.sigma_right
+
+    @property
+    def r_hat(self):
+        return numpy.abs(self.x).mean() ** 2 / self.mean_squares(self.x)
 
     @property
     def R_hat(self):
         return self.r_hat * (self.gamma ** 3 + 1) * (self.gamma + 1) / (self.gamma ** 2 + 1) ** 2
-
-    @property
-    def r_hat(self):
-        size = numpy.prod(self.x.shape)
-        return (numpy.sum(numpy.abs(self.x)) / size) ** 2 / (numpy.sum(self.x ** 2) / size)
-
-    def _sigma(self, side: str):
-        if side == 'right':
-            return self.mean_squares(numpy.where(self.x >= 0))
-        elif side == 'left':
-            return self.mean_squares(numpy.where(self.x < 0))
-        else:
-            raise ValueError('Side {0} was not recognized'.format(side))
-
-    @property
-    def sigma_left(self):
-        return self._sigma('left')
-
-    @property
-    def sigma_right(self):
-        return self._sigma('right')
 
     @property
     def constant(self):
@@ -61,12 +94,16 @@ class AsymmetricGeneralizedGaussian:
     @staticmethod
     def phi(alpha):
         return (scipy.special.gamma(2 / alpha) ** 2 /
-                scipy.special.gamma(1 / alpha) * scipy.special.gamma(3 / alpha))
+                (scipy.special.gamma(1 / alpha) * scipy.special.gamma(3 / alpha)))
 
-    def estimate_alpha(self, x0: float = 0.2):
-        x0 = numpy.array([x0])
-        # TODO: Verify if [0] can be removed from this expression
-        return scipy.optimize.root(lambda alpha: self.phi(alpha) - self.R_hat, x0).x[0]
+    def estimate_alpha(self, x0: float = 0.2) -> AsymmetricGeneralizedGaussian:
+        try:
+            solution = find_root(lambda alpha: self.phi(alpha) - self.R_hat, x0)
+            assert solution.success
+            return solution.x.item()
+        except ValueError:
+            raise ValueError('More than one solution was found for phi(alpha) - {}'.format(self.R_hat))
 
     def fit(self, x0: float = 0.2):
-        self._alpha = self.estimate_alpha(self.x, x0)
+        self._alpha = self.estimate_alpha(x0)
+        return self
