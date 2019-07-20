@@ -8,4 +8,4 @@ ENV VERSION ${VERSION}
 COPY . /src
 WORKDIR /src
 
-RUN pip install -e /src[dev]
+RUN pip install -e .[dev]
