@@ -12,7 +12,6 @@ setup(
     author='Ricardo Ocampo',
     author_email='me@ocampor.ai',
     url='https://github.com/ocampor/image-quality',
-    download_url='https://github.com/ocampor/image-quality/archive/0.1.0-a0.tar.gz',
     keywords=['image', 'quality', 'reference', 'reference-less'],
     install_requires=[
         'Pillow==5.2.0',

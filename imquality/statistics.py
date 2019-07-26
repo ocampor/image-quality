@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from enum import Enum
 from typing import Callable
 
@@ -107,3 +108,13 @@ class AsymmetricGeneralizedGaussian:
     def fit(self, x0: float = 0.2):
         self._alpha = self.estimate_alpha(x0)
         return self
+
+
+def normalize_kernel(kernel: numpy.ndarray) -> numpy.ndarray:
+    return kernel / numpy.sum(kernel)
+
+
+def gaussian_kernel2d(kernel_size, sigma: float):
+    y, x = numpy.indices((kernel_size, kernel_size)) - int(kernel_size / 2)
+    kernel = 1 / (2 * numpy.pi * sigma ** 2) * numpy.exp(-(x ** 2 + y ** 2) / (2 * sigma ** 2))
+    return normalize_kernel(kernel)

@@ -1,117 +1,135 @@
+import logging
 import os
 import pickle
-from itertools import chain
+from enum import Enum
 
-import skimage.color
-import numpy
-import cv2
 import PIL.Image
+
+try:
+    import cv2
+except ImportError:
+    logging.error('Library cv2 could not be imported')
+
+import numpy
 import scipy.signal
-import scipy.special
-import scipy.optimize
-import collections
+import skimage.color
 
-import svmutil
+from imquality.models import MODELS_PATH
+from imquality.statistics import AsymmetricGeneralizedGaussian, gaussian_kernel2d
+from imquality.utils import pil2ndarray
 
-RESOURCES_PATH = os.path.dirname(os.path.abspath(__file__))
-RESOURCES_PATH = os.path.join(RESOURCES_PATH, 'resources')
+try:
+    import svmutil
+except ImportError:
+    logging.error('Library svmutil could not be imported')
+
+
+class MscnType(Enum):
+    mscn = 1
+    horizontal = 2
+    vertical = 3
+    main_diagonal = 4
+    secondary_diagonal = 5
 
 
 class Brisque:
-    def __init__(self, image: PIL.Image):
-        self.image = numpy.asarray(image)
-        self.sigma = 7 / 6
-        self.kernel_size = 7
-        self.gray_image = skimage.color.rgb2gray(self.image)
-        self.downscaled_image = cv2.resize(
-            self.gray_image,
-            None,
-            fx=1 / 2,
-            fy=1 / 2,
-            interpolation=cv2.INTER_CUBIC)
+    _local_mean = None
+    _local_deviation = None
+    _mscn = None
+    _features = None
 
-    def normalize_kernel(self, kernel):
-        return kernel / numpy.sum(kernel)
+    def __init__(
+            self,
+            image: PIL.Image.Image,
+            kernel_size: int = 6,
+            sigma: float = 7 / 6):
+        self.image = pil2ndarray(image)
+        self.image = skimage.color.rgb2gray(self.image)
+        self.kernel_size = kernel_size
+        self.sigma = sigma
+        self.kernel = gaussian_kernel2d(kernel_size, sigma)
 
-    def gaussian_kernel2d(self):
-        n = self.kernel_size
+    @property
+    def local_mean(self):
+        if self._local_mean is None:
+            self._local_mean = scipy.signal.convolve2d(self.image, self.kernel, 'same')
+        return self._local_mean
 
-        Y, X = numpy.indices((n, n)) - int(n / 2)
-        gaussian_kernel = 1 / (2 * numpy.pi * self.sigma ** 2) * numpy.exp(-(X ** 2 + Y ** 2) / (2 * self.sigma ** 2))
-        return self.normalize_kernel(gaussian_kernel)
+    @property
+    def local_deviation(self):
+        if self._local_deviation is None:
+            sigma = numpy.square(self.image)
+            sigma = scipy.signal.convolve2d(sigma, self.kernel, 'same')
+            self._local_deviation = numpy.sqrt(numpy.abs(numpy.square(self.local_mean) - sigma))
+        return self._local_deviation
 
-    def local_deviation(self, image, local_mean, kernel):
-        "Vectorized approximation of local deviation"
-        sigma = image ** 2
-        sigma = scipy.signal.convolve2d(sigma, kernel, 'same')
-        return numpy.sqrt(numpy.abs(local_mean ** 2 - sigma))
+    @property
+    def mscn(self):
+        if self._mscn is None:
+            c = 1 / 255
+            self._mscn = (self.image - self.local_mean) / (self.local_deviation + c)
+        return self._mscn
 
-    def calculate_mscn_coefficients(self, image):
-        C = 1 / 255
-        kernel = self.gaussian_kernel2d()
-        local_mean = scipy.signal.convolve2d(image, kernel, 'same')
-        local_var = self.local_deviation(image, local_mean, kernel)
+    @property
+    def mscn_horizontal(self):
+        return self.mscn[:, :-1] * self.mscn[:, 1:]
 
-        return (image - local_mean) / (local_var + C)
+    @property
+    def mscn_vertical(self):
+        return self.mscn[:-1, :] * self.mscn[1:, :]
 
-    def generalized_gaussian_dist(self, x, alpha, sigma):
-        beta = sigma * numpy.sqrt(scipy.special.gamma(1 / alpha) / scipy.special.gamma(3 / alpha))
+    @property
+    def mscn_diagonal(self):
+        return self.mscn[:-1, :-1] * self.mscn[1:, 1:]
 
-        coefficient = alpha / (2 * beta() * scipy.special.gamma(1 / alpha))
-        return coefficient * numpy.exp(-(numpy.abs(x) / beta) ** alpha)
+    @property
+    def mscn_secondary_diagonal(self):
+        return self.mscn[1:, :-1] * self.mscn[:-1, 1:]
 
-    def calculate_pair_product_coefficients(self, mscn_coefficients):
-        return collections.OrderedDict({
-            'mscn': mscn_coefficients,
-            'horizontal': mscn_coefficients[:, :-1] * mscn_coefficients[:, 1:],
-            'vertical': mscn_coefficients[:-1, :] * mscn_coefficients[1:, :],
-            'main_diagonal': mscn_coefficients[:-1, :-1] * mscn_coefficients[1:, 1:],
-            'secondary_diagonal': mscn_coefficients[1:, :-1] * mscn_coefficients[:-1, 1:]
-        })
+    @property
+    def features(self):
+        return numpy.concatenate([self.calculate_features(mscn_type) for mscn_type in MscnType])
 
-    def calculate_brisque_features(self, image):
-        def calculate_features(coefficients_name, coefficients):
-            alpha, mean, sigma_l, sigma_r = AssymmetricGeneralizedGaussian.fit(coefficients)
+    def get_coefficients(self, mscn_type: MscnType):
+        coefficients = {
+            MscnType.mscn: self.mscn,
+            MscnType.horizontal: self.mscn_horizontal,
+            MscnType.vertical: self.mscn_vertical,
+            MscnType.main_diagonal: self.mscn_diagonal,
+            MscnType.secondary_diagonal: self.mscn_secondary_diagonal
+        }
+        return coefficients[mscn_type]
 
-            if coefficients_name == 'mscn':
-                var = (sigma_l ** 2 + sigma_r ** 2) / 2
-                return [alpha, var]
+    def calculate_features(self, mscn_type: MscnType):
+        agg = AsymmetricGeneralizedGaussian(self.get_coefficients(mscn_type)).fit()
+        if mscn_type == MscnType.mscn:
+            var = numpy.mean([numpy.square(agg.sigma_left), numpy.square(agg.sigma_right)])
+            return numpy.array([agg.alpha, var])
 
-            return [alpha, mean, sigma_l ** 2, sigma_r ** 2]
+        return numpy.array([agg.alpha, agg.mean, numpy.square(agg.sigma_left), numpy.square(agg.sigma_right)])
 
-        mscn_coefficients = self.calculate_mscn_coefficients(image)
-        coefficients = self.calculate_pair_product_coefficients(mscn_coefficients)
 
-        features = [calculate_features(name, coeff) for name, coeff in coefficients.items()]
-        flatten_features = list(chain.from_iterable(features))
-        return numpy.array(flatten_features)
+def scale_features(features: numpy.ndarray) -> numpy.ndarray:
+    with open(os.path.join(MODELS_PATH, 'normilize.pickle', 'rb')) as file:
+        scale_parameters = pickle.load(file)
 
-    def scale_features(self, features):
-        with open(os.path.join(RESOURCES_PATH, 'normalize.pickle'), 'rb') as handle:
-            scale_params = pickle.load(handle)
+    _min = numpy.array(scale_parameters['min_'])
+    _max = numpy.array(scale_parameters['max_'])
+    return -1 + (2.0 / (_max - _min) * (features - _min))
 
-        min_ = numpy.array(scale_params['min_'])
-        max_ = numpy.array(scale_params['max_'])
 
-        return -1 + (2.0 / (max_ - min_) * (features - min_))
+def predict(features: numpy.ndarray) -> float:
+    model = svmutil.svm_load_model('brisque_svm.txt')
+    x, idx = svmutil.gen_svm_nodearray(features, isKernel=(model.param.kernel_type == svmutil.PRECOMPUTED))
+    nr_classifier = 1
+    prob_estimates = (svmutil.c_double * nr_classifier)()
+    return svmutil.libsvm.svm_predict_probability(model, x, prob_estimates)
 
-    def calculate_image_quality_score(self, brisque_features):
-        model = svmutil.svm_load_model(os.path.join(RESOURCES_PATH, 'brisque_svm.txt'))
-        scaled_brisque_features = self.scale_features(brisque_features)
 
-        x, idx = svmutil.gen_svm_nodearray(
-            scaled_brisque_features,
-            isKernel=(model.param.kernel_type == svmutil.PRECOMPUTED))
-
-        nr_classifier = 1
-        prob_estimates = (svmutil.c_double * nr_classifier)()
-
-        return svmutil.libsvm.svm_predict_probability(model, x, prob_estimates)
-
-    def score(self):
-        brisque_features = self.calculate_brisque_features(self.gray_image)
-        downscale_brisque_features = self.calculate_brisque_features(self.downscaled_image)
-
-        brisque_features = numpy.concatenate((brisque_features, downscale_brisque_features))
-
-        return self.calculate_image_quality_score(brisque_features)
+def brisque_score(image: PIL.Image.Image):
+    brisque = Brisque(image)
+    downscaled_image = cv2.resize(image, None, fx=1 / 2, fy=1 / 2, interpolation=cv2.INTER_CUBIC)
+    downscaled_brisque = Brisque(downscaled_image)
+    features = numpy.concatenate([brisque.features, downscaled_brisque.features])
+    scaled_features = scale_features(features)
+    return predict(scaled_features)

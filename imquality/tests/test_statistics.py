@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 import numpy
 import pytest
 
@@ -23,7 +21,7 @@ def initialized_agg(agg):
 
 
 def test_asymmetric_generalized_gaussian_creation(agg):
-    assert agg.x - DATA == pytest.approx(0, EPSILON)
+    assert agg.x == pytest.approx(DATA, EPSILON)
 
 
 def test_alpha_not_initialized(agg):
@@ -36,11 +34,11 @@ def test_alpha_initialized(initialized_agg):
 
 
 def test_left_distribution(agg):
-    assert agg.x_left - numpy.array([-0.5, -1.3]) == pytest.approx(0, EPSILON)
+    assert agg.x_left == pytest.approx(numpy.array([-0.5, -1.3]), EPSILON)
 
 
 def test_right_distribution(agg):
-    assert agg.x_right - numpy.array([0.1, 0.2, 0.3, 0.2, 1.5]) == pytest.approx(0, EPSILON)
+    assert agg.x_right == pytest.approx(numpy.array([0.1, 0.2, 0.3, 0.2, 1.5]), EPSILON)
 
 
 def test_mean_squares():
@@ -93,3 +91,11 @@ def test_constant(initialized_agg):
 
 def test_mean(initialized_agg):
     assert initialized_agg.mean == pytest.approx(-0.216150, EPSILON)
+
+
+def test_gaussian_kernel2d():
+    kernel = imquality.statistics.gaussian_kernel2d(3, 3)
+    expected = numpy.array([[0.107035, 0.113092, 0.107035],
+                            [0.113092, 0.119491, 0.113092],
+                            [0.107035, 0.113092, 0.107035]])
+    assert kernel == pytest.approx(expected, 0.001)
