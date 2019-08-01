@@ -1,27 +1,17 @@
-import logging
 import os
 import pickle
 from enum import Enum
 
 import PIL.Image
-
-try:
-    import cv2
-except ImportError:
-    logging.error('Library cv2 could not be imported')
-
+import cv2
 import numpy
 import scipy.signal
 import skimage.color
+import svmutil
 
 from imquality.models import MODELS_PATH
 from imquality.statistics import AsymmetricGeneralizedGaussian, gaussian_kernel2d
 from imquality.utils import pil2ndarray
-
-try:
-    import svmutil
-except ImportError:
-    logging.error('Library svmutil could not be imported')
 
 
 class MscnType(Enum):
@@ -41,7 +31,7 @@ class Brisque:
     def __init__(
             self,
             image: PIL.Image.Image,
-            kernel_size: int = 6,
+            kernel_size: int = 7,
             sigma: float = 7 / 6):
         self.image = pil2ndarray(image)
         self.image = skimage.color.rgb2gray(self.image)
@@ -110,7 +100,7 @@ class Brisque:
 
 
 def scale_features(features: numpy.ndarray) -> numpy.ndarray:
-    with open(os.path.join(MODELS_PATH, 'normilize.pickle', 'rb')) as file:
+    with open(os.path.join(MODELS_PATH, 'normalize.pickle'), 'rb') as file:
         scale_parameters = pickle.load(file)
 
     _min = numpy.array(scale_parameters['min_'])
@@ -119,7 +109,7 @@ def scale_features(features: numpy.ndarray) -> numpy.ndarray:
 
 
 def predict(features: numpy.ndarray) -> float:
-    model = svmutil.svm_load_model('brisque_svm.txt')
+    model = svmutil.svm_load_model(os.path.join(MODELS_PATH, 'brisque_svm.txt'))
     x, idx = svmutil.gen_svm_nodearray(features, isKernel=(model.param.kernel_type == svmutil.PRECOMPUTED))
     nr_classifier = 1
     prob_estimates = (svmutil.c_double * nr_classifier)()
@@ -127,9 +117,9 @@ def predict(features: numpy.ndarray) -> float:
 
 
 def brisque_score(image: PIL.Image.Image):
-    brisque = Brisque(image)
-    downscaled_image = cv2.resize(image, None, fx=1 / 2, fy=1 / 2, interpolation=cv2.INTER_CUBIC)
-    downscaled_brisque = Brisque(downscaled_image)
+    brisque = Brisque(image, kernel_size=7, sigma=7 / 6)
+    downscaled_image = cv2.resize(brisque.image, None, fx=1 / 2, fy=1 / 2, interpolation=cv2.INTER_CUBIC)
+    downscaled_brisque = Brisque(downscaled_image, kernel_size=7, sigma=7 / 6)
     features = numpy.concatenate([brisque.features, downscaled_brisque.features])
     scaled_features = scale_features(features)
     return predict(scaled_features)

@@ -2,6 +2,14 @@ dist: xenial
 language: python
 python:
   - 3.7.4
+before_install:
+  - git clone 'https://github.com/cjlin1/libsvm.git' /opt/libsvm
+  - make -C /opt/libsvm
+  - make -C /opt/libsvm/python
+  - sudo apt-get update -y
+  - sudo apt-get install -y libglib2.0-0 libsm6 libfontconfig1 libxrender1
+env:
+  - PYTHONPATH=${PYTHONPATH}:/opt/libsvm/python
 install:
   - pip install -e .[dev]
 script:
