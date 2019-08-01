@@ -14,3 +14,10 @@ install:
   - pip install -e .[dev]
 script:
   - pytest
+deploy:
+  provider: pypi
+  user: ocampor
+  on:
+    branch: master
+  password:
+    secure: Un7bJ4yUiFt9SLPAlCJO4O7KsWNbeGSp0FcObQLtm8RTlYfnIfPTmfoFaIo716A1mgbuhfovh8F8i1NEWoaumLPCjP5z0dhD14PIkmtICgqnuqfH9LWALnHpctN+mzMSmZarWf7jb+KsuIEJPSpVgqhu4ZjERJirdLZWNnmoZYokmeGoaxrHl8Ykid14we0ydKJl4vjxfvs21K+9f84SE3SCmpRMX3myHpSAMiJpZABYTekQM6KzhPUxv7BrGxWjkWbM0TAjmGE7OJZtH8dSBRfmvTz+Ct36D2xLVRX0nw+fJ7jq2Elsx+0rd8kO3IdcnWLzhu29koexih7f4vb4reLr5Ya1Hw8VLqqICAX4ueQCSbGDSl162U/ft9PBrSIVjjeOxc21rIVl3AVq+28z2osjN3rs7mJPYrufNaNg3T5A17/CDoX6B0rjiFXj2R8YdnycqKsslpzkVgKDXljpKLIq5ZhASBByhYEMqw79BEarQ3iJOwnRfnzqJBEUUnp5F1XcRJNuNdCzsqa6zjYtlz/kqdRTu67Wr7Yg9mKaJQE2qTnhT/5oISczQM6NSE86tPKlIcA6as75y1QQtxt5R94fEbFc5XBPsGZgjN625YOAIZg+IyTjY5Qh5LRLisB+Vllr68J6FnyDZaJPEtwrcGzS5BWDY2qkEcgi1msyy5I=

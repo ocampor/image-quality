@@ -1,11 +1,20 @@
 version: '3.6'
 
 services:
+  travis:
+    image: ocampor/travis:3.7.4
+    build:
+      context: docker/travis
+      dockerfile: Dockerfile
+    entrypoint: travis
+    working_dir: /src
+    volumes:
+      - .:/src
   image-quality:
     image: ocampor/image-quality:${VERSION}
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/test/Dockerfile
       args:
         PYTHON_DOCKER_VERSION: 3.7.4-slim
         VERSION: ${VERSION}
