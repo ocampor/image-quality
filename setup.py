@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name='image-quality',
     packages=['imquality'],
-    version='1.0.0',
+    version='1.0.1',
     license='Apache 2.0',
     description='Image quality is an open source software library for Automatic Image Quality Assessment (IQA).',
     author='Ricardo Ocampo',

@@ -1,5 +1,5 @@
 git-commit := `git rev-parse --short HEAD`
-version := 1.0.0-a${git-commit}
+version := 1.0.1-a${git-commit}
 python-docker-version := 3.7.4-slim
 
 build-images:

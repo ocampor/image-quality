@@ -16,7 +16,7 @@ ENV PYTHONPATH ${PYTHONPATH}:${LIBSVM_PATH}/python
 # OpenCV dependencies
 RUN apt-get install -y libglib2.0-0 libsm6 libfontconfig1 libxrender1
 
-COPY .. /src
+COPY . /src
 WORKDIR /src
 
 RUN pip install -e .[dev]
