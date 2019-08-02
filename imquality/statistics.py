@@ -31,7 +31,7 @@ class AsymmetricGeneralizedGaussian:
         elif side == DistributionSide.right:
             idx = numpy.where(self.x >= 0)
         else:
-            raise ValueError('Side {0} was not recognized'.format(side))
+            raise ValueError(f'Side {side} was not recognized')
 
         return self.x[idx]
 
@@ -49,7 +49,7 @@ class AsymmetricGeneralizedGaussian:
         elif side == DistributionSide.left:
             _x = self.x_left
         else:
-            raise ValueError('Side {0} was not recognized'.format(side))
+            raise ValueError(f'Side {side} was not recognized')
 
         return numpy.sqrt(self.mean_squares(_x))
 
@@ -103,7 +103,7 @@ class AsymmetricGeneralizedGaussian:
             assert solution.success
             return solution.x.item()
         except ValueError:
-            raise ValueError('More than one solution was found for phi(alpha) - {}'.format(self.R_hat))
+            raise ValueError(f'More than one solution was found for phi(alpha) - {self.R_hat}')
 
     def fit(self, x0: float = 0.2):
         self._alpha = self.estimate_alpha(x0)
