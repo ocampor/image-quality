@@ -9,12 +9,8 @@ before_install:
   - sudo apt-get update -y
   - sudo apt-get install -y libglib2.0-0 libsm6 libfontconfig1 libxrender1
 env:
-  matrix:
-    - PYTHONPATH=${PYTHONPATH}:/opt/libsvm/python
-    - PYPI_USER=ocampor
-    - secure: b7lz9pgyxIn23cXsblfAtXBrE1rWRhdRYCbyWtcXVnfrHyg0w9BPL7J9gPhfrXl60EZdCuLQfjoM9mS/LdHNWf9h/VlNWucnTX1T+70wjooV+64UyUYGZO0tM07xxNuZ+MRfVpd4FdTBg/AVcBrEI/o9rSin+lZboepJWjxGGwfAjzCYy6P+755afNHtPWBTE3dM+NbMw+h2IEyi8sdQomZzg2DD3m1M+P+Sw5Z8q5P/lSO8meaL222aMsbeYBiLHkEAsUd8mV1bVR45GjPtvgxvTnD/9NP21N0k7TMkkSP3dc2fJVXwjnWGiiCSw80uw38nT1ZVJYlqnDrVvj7406J5KHowvrQdxjLia+SH5FswusIxAu8K2lWRwNVASCYdAw60+Q9uN/ZXtVb/3Iv90NclAHUVQNVW1ioWoTNhM87oCNcMmmBTNZxn9hhiskYydLMsZ3wr3Jnvs0IoOu3LxBhKns2kvnRhQz9uNsMGsIkkb4cOhpfidbtIeFr5WCwAQVslWncgV2L6dwPLxEfu0lJml2uUYCf7LwAYMur8drT2ERJpT3WPnjvWp04YHUjO+H3AkuJZSz8fooGkVugGIfjYh6PI6/Hb+ivYvazp8V5Nj/i9TsVAi+fx4c6EC0FgxHNBJScg3TV+H7jZbgvHGQjQyP0I546QqyEvgU/ESEk=
-  global:
-    secure: aTy3iiceWoAeJq1zQYTVfbJnzKSsKXKBtydbJwzixHVcYaVML6xKhuqLNzUwOKZYmniy2VkoK9Mha5NaEsafk6Zzi5+wMzkjOWW4Y85ByC0BAJhjPY2WtBl3nOyklG+GfpWUCg0olX1mXgedL8wMxewvVKlgNLb6a5yAVX4LUkAzdt3CVKmxg5LpekNTnrCDcMxV6rCD1FaUgbTWJcrjZ06F1bOc5PY9rpaopJyJ3wfoGCflhCLb1S4e8rC21O7djF+sIVm9Sdf0pH4hyEg+JzbMq+3+yN7doGgfojOQTUEGSQX1U69F65gwe55SMp5HwtMiwfn8g6tpNe2fmRyW6O0clj9W886gfgaONU1qejjYi9LTcnEM0XjDmKIB2bzCaxiplUOzdwrG0IxwKlPZbj7UMGt67YToyV31Wg3dXWXqQvjPJJOA3EMV2fGcygaM5Kr8aFQgVwFJtS6C7GhOFJrFNoagiowaEuMaQ6kXv9Jl82IDS17RUBkPy2CoVTvpAMzZy0HZdMT7yS+nLBAqeP1PvpGiJX0vbWrHE9hWRELN/bLVdEoW174JyHbzMGuVU+IWfL9t4yHR4wf3dVBMPfEsoPEu7DyVKztvvwcdCOvFE/VJi/Ksf0dvfjwF6eUZxqOtTWKvQ69rjO36jGX8GQYsnoM5wYv3W7Z5i3cqa68=
+  - PYTHONPATH=${PYTHONPATH}:/opt/libsvm/python`
+  - PYPI_USER=ocampor
 install:
   - pip install -e .[dev]
 script:
