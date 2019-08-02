@@ -8,9 +8,6 @@ before_install:
   - make -C /opt/libsvm/python
   - sudo apt-get update -y
   - sudo apt-get install -y libglib2.0-0 libsm6 libfontconfig1 libxrender1
-env:
-  - PYTHONPATH=${PYTHONPATH}:/opt/libsvm/python`
-  - PYPI_USER=ocampor
 install:
   - pip install -e .[dev]
 script:
