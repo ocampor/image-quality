@@ -5,8 +5,8 @@ import numpy
 import pytest
 
 from imquality.quality.brisque import Brisque, brisque_score
-from imquality.tests import TEST_PATH
 from imquality.utils import load_image
+from tests import TEST_PATH
 
 EPSILON = 0.0001
 

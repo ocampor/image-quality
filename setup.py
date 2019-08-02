@@ -25,7 +25,6 @@ setup(
         ]
     },
     classifiers=[
-        'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
         'Topic :: Scientific/Engineering :: Image Recognition',
