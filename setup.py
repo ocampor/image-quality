@@ -11,11 +11,11 @@ setup(
     url='https://github.com/ocampor/image-quality',
     keywords=['image', 'quality', 'reference', 'reference-less'],
     install_requires=[
-        'Pillow==5.2.0',
-        'numpy==1.16.4',
-        'scipy==1.3.0',
-        'opencv-python==4.1.0.25',
-        'scikit-image==0.15.0',
+        'Pillow>=5.2.0',
+        'numpy>=1.16.4',
+        'scipy>=1.3.0',
+        'opencv-python>=4.1.0.25',
+        'scikit-image>=0.15.0',
     ],
     extras_require={
         'dev': [
