@@ -108,6 +108,15 @@ def scale_features(features: numpy.ndarray) -> numpy.ndarray:
     return -1 + (2.0 / (_max - _min) * (features - _min))
 
 
+def calculate_features(image: PIL.Image, kernel_size, sigma) -> numpy.ndarray:
+    brisque = Brisque(image, kernel_size=kernel_size, sigma=sigma)
+    downscaled_image = cv2.resize(brisque.image, None, fx=1 / 2, fy=1 / 2, interpolation=cv2.INTER_CUBIC)
+    downscaled_brisque = Brisque(downscaled_image, kernel_size=kernel_size, sigma=sigma)
+    features = numpy.concatenate([brisque.features, downscaled_brisque.features])
+    scaled_features = scale_features(features)
+    return scaled_features
+
+
 def predict(features: numpy.ndarray) -> float:
     model = svmutil.svm_load_model(os.path.join(MODELS_PATH, 'brisque_svm.txt'))
     x, idx = svmutil.gen_svm_nodearray(features, isKernel=(model.param.kernel_type == svmutil.PRECOMPUTED))
@@ -116,10 +125,6 @@ def predict(features: numpy.ndarray) -> float:
     return svmutil.libsvm.svm_predict_probability(model, x, prob_estimates)
 
 
-def brisque_score(image: PIL.Image.Image):
-    brisque = Brisque(image, kernel_size=7, sigma=7 / 6)
-    downscaled_image = cv2.resize(brisque.image, None, fx=1 / 2, fy=1 / 2, interpolation=cv2.INTER_CUBIC)
-    downscaled_brisque = Brisque(downscaled_image, kernel_size=7, sigma=7 / 6)
-    features = numpy.concatenate([brisque.features, downscaled_brisque.features])
-    scaled_features = scale_features(features)
+def score(image: PIL.Image.Image, kernel_size=7, sigma=7 / 6) -> float:
+    scaled_features = calculate_features(image, kernel_size, sigma)
     return predict(scaled_features)

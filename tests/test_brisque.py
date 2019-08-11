@@ -4,7 +4,7 @@ import PIL.Image
 import numpy
 import pytest
 
-from imquality.quality.brisque import Brisque, brisque_score
+from imquality.brisque import Brisque, score
 from imquality.utils import load_image
 from tests import TEST_PATH
 
@@ -88,4 +88,4 @@ def test_correct_features(brisque: Brisque):
 
 
 def test_correct_score_calculation(image: PIL.Image.Image):
-    assert brisque_score(image) == pytest.approx(4.9541572815704455, EPSILON)
+    assert score(image) == pytest.approx(4.9541572815704455, EPSILON)
