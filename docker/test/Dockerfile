@@ -19,4 +19,7 @@ RUN apt-get install -y libglib2.0-0 libsm6 libfontconfig1 libxrender1
 COPY . /src
 WORKDIR /src
 
+# Install twine to validate dist package
+RUN pip install --upgrade twine
 RUN pip install -e .[dev]
+RUN python setup.py sdist && python -m twine check dist/*
