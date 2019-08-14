@@ -3,8 +3,8 @@ import os
 import PIL.Image
 import pytest
 
-from imquality.tests import TEST_PATH
 from imquality.utils import load_image, pil2ndarray
+from tests import TEST_PATH
 
 
 @pytest.fixture

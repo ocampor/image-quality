@@ -1,7 +1,7 @@
 dist: xenial
 language: python
 python:
-  - 3.7.4
+  - 3.7
 before_install:
   - git clone 'https://github.com/cjlin1/libsvm.git' /opt/libsvm
   - make -C /opt/libsvm
