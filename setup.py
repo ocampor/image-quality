@@ -1,14 +1,35 @@
+import os
 from distutils.core import setup
 
+import imquality
+
+DESCRIPTION = 'Image quality is an open source software library for Automatic Image Quality Assessment (IQA).'
+LICENSE = 'Apache 2.0'
+DIST_NAME = 'image-quality'
+ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
+AUTHOR_EMAIL = 'me@ocampor.ai'
+AUTHOR = 'Ricardo Ocampo'
+URL = 'https://github.com/ocampor/image-quality'
+VERSION = imquality.__version__
+PROJECT_URLS = {
+    'Bug Tracker': 'https://github.com/ocampor/image-quality/issues',
+    'Documentation': None,
+    'Source Code': 'https://github.com/ocampor/image-quality'
+}
+
+with open(os.path.join(ROOT_PATH, 'README.md'), 'r') as readme:
+    LONG_DESCRIPTION = readme.read()
+
 setup(
-    name='image-quality',
+    name=DIST_NAME,
     packages=['imquality'],
-    version='1.0.1',
-    license='Apache 2.0',
-    description='Image quality is an open source software library for Automatic Image Quality Assessment (IQA).',
-    author='Ricardo Ocampo',
-    author_email='me@ocampor.ai',
-    url='https://github.com/ocampor/image-quality',
+    version=VERSION,
+    license=LICENSE,
+    description=DESCRIPTION,
+    long_description=LONG_DESCRIPTION,
+    author=AUTHOR,
+    author_email=AUTHOR_EMAIL,
+    url=URL,
     keywords=['image', 'quality', 'reference', 'reference-less'],
     install_requires=[
         'Pillow>=5.2.0',
@@ -31,5 +52,7 @@ setup(
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 3.7',
     ],
-    include_package_data=True
+    include_package_data=True,
+    python_requires=">=3.7",
+    project_urls=PROJECT_URLS,
 )

@@ -5,6 +5,19 @@ email, or any other method with the owners of this repository before making a ch
 
 Please note we have a code of conduct, please follow it in all your interactions with the project.
 
+## Local Development
+
+The project has a `Makefile` to easily configure the environment and run the tests. To build the
+development image just run in your console:
+```.env
+make build-images
+```
+
+and to execute the tests
+```.env
+make run-test
+```
+
 ## Pull Request Process
 
 1. Branch from the develop branch and, if needed, rebase to the current develop branch before submitting
