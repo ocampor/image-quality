@@ -1,13 +1,12 @@
-import os
-import pickle
-from enum import Enum
-
 import PIL.Image
 import cv2
 import numpy
+import os
+import pickle
 import scipy.signal
 import skimage.color
-import svmutil
+from enum import Enum
+from libsvm import svmutil
 
 from imquality.models import MODELS_PATH
 from imquality.statistics import AsymmetricGeneralizedGaussian, gaussian_kernel2d

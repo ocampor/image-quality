@@ -17,7 +17,4 @@ services:
       dockerfile: docker/test/Dockerfile
       args:
         PYTHON_DOCKER_VERSION: 3.7.4-slim
-        VERSION: ${VERSION}
-  pytest:
-    image: ocampor/image-quality:${VERSION}
-    entrypoint: pytest
+      target: base

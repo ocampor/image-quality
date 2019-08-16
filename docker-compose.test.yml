@@ -1,0 +1,7 @@
+version: '3.6'
+
+services:
+  image-quality:
+    image: ocampor/image-quality-test:${VERSION}
+    build:
+      target: tests
