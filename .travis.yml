@@ -5,6 +5,6 @@ python:
 install:
   - pip install -e .[dev]
 script:
-  - pytest
+  - bash scripts/run-tests.sh
 after_success:
   - bash scripts/deploy.sh

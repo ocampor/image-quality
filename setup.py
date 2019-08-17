@@ -1,5 +1,6 @@
 import os
-from distutils.core import setup
+
+from setuptools import setup
 
 import imquality
 
@@ -13,7 +14,6 @@ URL = 'https://github.com/ocampor/image-quality'
 VERSION = imquality.__version__
 PROJECT_URLS = {
     'Bug Tracker': 'https://github.com/ocampor/image-quality/issues',
-    'Documentation': None,
     'Source Code': 'https://github.com/ocampor/image-quality'
 }
 
