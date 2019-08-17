@@ -87,5 +87,12 @@ def test_correct_features(brisque: Brisque):
     assert brisque.features == pytest.approx(expected, EPSILON)
 
 
-def test_correct_score_calculation(image: PIL.Image.Image):
-    assert score(image) == pytest.approx(4.9541572815704455, EPSILON)
+@pytest.mark.parametrize("file_path,expected", [
+    ("img151.bmp", 14.2005),
+    ("img16.bmp", 63.4818),
+    ("img176.bmp", 89.9085),
+    ("kodim05.png", 4.22978)
+])
+def test_correct_score_calculation(file_path, expected):
+    image = load_image(os.path.join(TEST_PATH, 'resources', file_path))
+    assert score(image) == pytest.approx(expected, 3)

@@ -1,16 +1,24 @@
-import PIL.Image
-import cv2
-import numpy
 import os
 import pickle
+import typing
+import warnings
+from enum import Enum
+
+import PIL.Image
+import numpy
 import scipy.signal
 import skimage.color
-from enum import Enum
+import skimage.transform
 from libsvm import svmutil
 
 from imquality.models import MODELS_PATH
 from imquality.statistics import AsymmetricGeneralizedGaussian, gaussian_kernel2d
 from imquality.utils import pil2ndarray
+
+with open(os.path.join(MODELS_PATH, 'normalize.pickle'), 'rb') as file:
+    scale_parameters = pickle.load(file)
+
+model = svmutil.svm_load_model(os.path.join(MODELS_PATH, 'brisque_svm.txt'))
 
 
 class MscnType(Enum):
@@ -29,7 +37,7 @@ class Brisque:
 
     def __init__(
             self,
-            image: PIL.Image.Image,
+            image: typing.Union[PIL.Image.Image, numpy.ndarray],
             kernel_size: int = 7,
             sigma: float = 7 / 6):
         self.image = pil2ndarray(image)
@@ -99,9 +107,6 @@ class Brisque:
 
 
 def scale_features(features: numpy.ndarray) -> numpy.ndarray:
-    with open(os.path.join(MODELS_PATH, 'normalize.pickle'), 'rb') as file:
-        scale_parameters = pickle.load(file)
-
     _min = numpy.array(scale_parameters['min_'])
     _max = numpy.array(scale_parameters['max_'])
     return -1 + (2.0 / (_max - _min) * (features - _min))
@@ -109,7 +114,17 @@ def scale_features(features: numpy.ndarray) -> numpy.ndarray:
 
 def calculate_features(image: PIL.Image, kernel_size, sigma) -> numpy.ndarray:
     brisque = Brisque(image, kernel_size=kernel_size, sigma=sigma)
-    downscaled_image = cv2.resize(brisque.image, None, fx=1 / 2, fy=1 / 2, interpolation=cv2.INTER_CUBIC)
+    # WARNING: The algorithm is very sensitive to rescale
+    # FIXME: this is empirically the best configuration; however, scikit-image warns about bi-quadratic implementation.
+    #    Fix this warning error in version of scikit-image 0.16.0.
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        downscaled_image = skimage.transform.rescale(
+            brisque.image, 1 / 2,
+            order=2,
+            mode='constant',
+            anti_aliasing=False,
+            multichannel=False)
     downscaled_brisque = Brisque(downscaled_image, kernel_size=kernel_size, sigma=sigma)
     features = numpy.concatenate([brisque.features, downscaled_brisque.features])
     scaled_features = scale_features(features)
@@ -117,7 +132,6 @@ def calculate_features(image: PIL.Image, kernel_size, sigma) -> numpy.ndarray:
 
 
 def predict(features: numpy.ndarray) -> float:
-    model = svmutil.svm_load_model(os.path.join(MODELS_PATH, 'brisque_svm.txt'))
     x, idx = svmutil.gen_svm_nodearray(features, isKernel=(model.param.kernel_type == svmutil.PRECOMPUTED))
     nr_classifier = 1
     prob_estimates = (svmutil.c_double * nr_classifier)()

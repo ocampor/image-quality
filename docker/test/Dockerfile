@@ -3,10 +3,8 @@ ARG WORKDIR=/src
 
 FROM python:${PYTHON_DOCKER_VERSION} as base
 ARG WORKDIR
-# Install libsvm
+# libsvm dependencies
 RUN apt-get update && apt-get install -y g++
-# OpenCV dependencies
-RUN apt-get install -y libglib2.0-0 libsm6 libfontconfig1 libxrender1 libxext6
 # Install package
 ADD imquality ${WORKDIR}/imquality
 ADD setup.py README.rst MANIFEST.in ${WORKDIR}/

@@ -35,7 +35,6 @@ setup(
         'Pillow>=5.2.0',
         'numpy>=1.16.4',
         'scipy>=1.3.0',
-        'opencv-python>=4.1.0.25',
         'scikit-image>=0.15.0',
         'libsvm>=3.23.0',
     ],
