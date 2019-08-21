@@ -1,8 +1,7 @@
 .. image:: https://travis-ci.com/ocampor/image-quality.svg?branch=master
     :target: https://travis-ci.com/ocampor/image-quality
 
-.. image:: https://img.shields.io/pypi/dm/image-quality?color=blue
-    :target: https://pypi.org/project/image-quality/
+.. image:: https://img.shields.io/pypi/dm/image-quality?color=blue   :alt: PyPI - Downloads
 
 Image Quality
 =============
