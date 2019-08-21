@@ -1,7 +1,12 @@
-.. image:: https://travis-ci.com/ocampor/image-quality.svg?branch=master
-    :target: https://travis-ci.com/ocampor/image-quality
+.. -*- mode: rst -*-
 
-.. image:: https://img.shields.io/pypi/dm/image-quality?color=blue   :alt: PyPI - Downloads
+|Travis|_ |PyPi|_
+
+.. |Travis| image:: https://travis-ci.com/ocampor/image-quality.svg?branch=master
+.. _Travis: https://travis-ci.com/ocampor/image-quality
+
+.. |PyPi| image:: https://img.shields.io/pypi/dm/image-quality?color=blue   :alt: PyPI - Downloads
+.. _PyPi: https://pypi.org/project/image-quality/
 
 Image Quality
 =============
