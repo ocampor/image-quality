@@ -1,15 +1,17 @@
 version: '3.6'
 
 services:
-  travis:
-    image: ocampor/travis:3.7.4
+  notebook:
+    image: ocampor/notebook
     build:
-      context: docker/travis
+      context: docker/notebook
       dockerfile: Dockerfile
-    entrypoint: travis
-    working_dir: /src
+    environment:
+      - JUPYTER_PASS=${JUPYTER_PASS}
+    ports:
+      - 8000:8000
     volumes:
-      - .:/src
+      - ./notebooks:/home/ocampor/notebooks
   image-quality:
     image: ocampor/image-quality:${VERSION}
     build:
