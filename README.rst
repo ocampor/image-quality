@@ -32,7 +32,7 @@ your machine run
 
 ::
 
-   pip install imquality
+   pip install image-quality
 
 Example
 -------
