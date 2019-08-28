@@ -37,7 +37,7 @@ your machine run
 Example
 -------
 
-After installing ``imquality`` package, you can test that it was
+After installing ``image-quality`` package, you can test that it was
 successfully installed running the following commands in a python
 terminal.
 
