@@ -18,5 +18,5 @@ services:
       context: .
       dockerfile: docker/test/Dockerfile
       args:
-        PYTHON_DOCKER_VERSION: 3.7.4-slim
+        PYTHON_DOCKER_VERSION: ${PYTHON_DOCKER_VERSION}
       target: base
