@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from enum import Enum
 from typing import Callable
 
@@ -97,7 +95,7 @@ class AsymmetricGeneralizedGaussian:
         return (scipy.special.gamma(2 / alpha) ** 2 /
                 (scipy.special.gamma(1 / alpha) * scipy.special.gamma(3 / alpha)))
 
-    def estimate_alpha(self, x0: float = 0.2) -> AsymmetricGeneralizedGaussian:
+    def estimate_alpha(self, x0: float = 0.2) -> float:
         try:
             solution = find_root(lambda alpha: self.phi(alpha) - self.R_hat, x0)
             assert solution.success
@@ -105,7 +103,7 @@ class AsymmetricGeneralizedGaussian:
         except ValueError:
             raise ValueError(f'More than one solution was found for phi(alpha) - {self.R_hat}')
 
-    def fit(self, x0: float = 0.2):
+    def fit(self, x0: float = 0.2) -> 'AsymmetricGeneralizedGaussian':
         self._alpha = self.estimate_alpha(x0)
         return self
 
