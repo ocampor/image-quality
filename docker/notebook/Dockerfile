@@ -13,5 +13,5 @@ CMD ["/bin/bash", "entrypoint.sh"]
 
 FROM base AS tensorflow
 USER root
-RUN pip install tensorflow==2.0.0-beta1
+RUN pip install tensorflow==2.0.0-rc0
 USER ocampor
