@@ -5,10 +5,16 @@ from matplotlib import pyplot as plt
 
 
 @tf.function
-def image_normalization(image: tf.Tensor, min=0, max=255) -> tf.Tensor:
-    image_min = tf.reduce_min(image)
-    image_max = tf.reduce_max(image)
-    return (max - min) / (image_max - image_min) * (image - image_min) + min
+def image_normalization(image: tf.Tensor, new_min=0, new_max=255) -> tf.Tensor:
+    original_dtype = image.dtype
+    new_min = tf.constant(new_min, dtype=tf.float32)
+    new_max = tf.constant(new_max, dtype=tf.float32)
+    image_min = tf.cast(tf.reduce_min(image), tf.float32)
+    image_max = tf.cast(tf.reduce_max(image), tf.float32)
+    image = tf.cast(image, tf.float32)
+
+    normalized_image = (new_max - new_min) / (image_max - image_min) * (image - image_min) + new_min
+    return tf.cast(normalized_image, original_dtype)
 
 
 @tf.function
@@ -28,12 +34,30 @@ def gaussian_kernel2d(kernel_size: int, sigma: float, dtype=tf.float32) -> tf.Te
 
 
 @tf.function
-def gaussian_filter(image: tf.Tensor, kernel_size: int, sigma: float) -> tf.Tensor:
+def gaussian_filter(image: tf.Tensor, kernel_size: int, sigma: float, dtype=tf.float32) -> tf.Tensor:
     kernel = gaussian_kernel2d(kernel_size, sigma)
+    original_shape = image.get_shape()
     if image.get_shape().ndims == 3:
         image = image[tf.newaxis, :, :, :]
+    image = tf.cast(image, tf.float32)
+    image = tf.nn.conv2d(image, kernel[:, :, tf.newaxis, tf.newaxis], strides=1, padding='SAME')
+    image = tf.reshape(image, original_shape)
+    return tf.cast(image, dtype)
 
-    return tf.nn.conv2d(image, kernel[:, :, tf.newaxis, tf.newaxis], strides=1, padding='SAME')
+
+@tf.function
+def rescale(image: tf.Tensor, scale: float, dtype=tf.float32, **kwargs) -> tf.Tensor:
+    assert image.get_shape().ndims in (3, 4), 'The tensor must be of dimension 3 or 4'
+
+    def get_scaled_size() -> tf.Tensor:
+        shape = tf.shape(image, out_type=tf.float32)
+        shape = shape[:2] if image.get_shape().ndims == 3 else shape[1:3]
+        return tf.cast(shape * scale, tf.int32)
+
+    image = tf.cast(image, tf.float32)
+    rescale_size = get_scaled_size()
+    rescaled_image = tf.image.resize(image, size=rescale_size, **kwargs)
+    return tf.cast(rescaled_image, dtype)
 
 
 def show_images(images: list, **kwargs):
