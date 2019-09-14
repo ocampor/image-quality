@@ -60,6 +60,12 @@ def rescale(image: tf.Tensor, scale: float, dtype=tf.float32, **kwargs) -> tf.Te
     return tf.cast(rescaled_image, dtype)
 
 
+@tf.function
+def read_image(filename: str, **kwargs) -> tf.Tensor:
+    stream = tf.io.read_file(filename)
+    return tf.image.decode_image(stream, **kwargs)
+
+
 def show_images(images: list, **kwargs):
     fig, axs = plt.subplots(1, len(images), figsize=(19, 10))
     for image, ax in zip(images, axs):
