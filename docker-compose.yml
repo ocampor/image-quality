@@ -12,6 +12,7 @@ services:
       - 8000:8000
     volumes:
       - ./notebooks:/home/ocampor/notebooks
+      - /Users/ricardoocampo/Data:/data
   image-quality:
     image: ocampor/image-quality:${VERSION}
     build:
