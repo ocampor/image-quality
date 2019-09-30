@@ -4,7 +4,6 @@ import tensorflow as tf
 from matplotlib import pyplot as plt
 
 
-@tf.function
 def image_normalization(image: tf.Tensor, new_min=0, new_max=255) -> tf.Tensor:
     original_dtype = image.dtype
     new_min = tf.constant(new_min, dtype=tf.float32)
@@ -17,12 +16,10 @@ def image_normalization(image: tf.Tensor, new_min=0, new_max=255) -> tf.Tensor:
     return tf.cast(normalized_image, original_dtype)
 
 
-@tf.function
 def normalize_kernel(kernel: tf.Tensor) -> tf.Tensor:
     return kernel / tf.reduce_sum(kernel)
 
 
-@tf.function
 def gaussian_kernel2d(kernel_size: int, sigma: float, dtype=tf.float32) -> tf.Tensor:
     _range = tf.range(kernel_size)
     x, y = tf.meshgrid(_range, _range)
@@ -33,7 +30,6 @@ def gaussian_kernel2d(kernel_size: int, sigma: float, dtype=tf.float32) -> tf.Te
     return normalize_kernel(kernel)
 
 
-@tf.function
 def gaussian_filter(image: tf.Tensor, kernel_size: int, sigma: float, dtype=tf.float32) -> tf.Tensor:
     kernel = gaussian_kernel2d(kernel_size, sigma)
     original_shape = image.get_shape()
@@ -45,12 +41,11 @@ def gaussian_filter(image: tf.Tensor, kernel_size: int, sigma: float, dtype=tf.f
     return tf.cast(image, dtype)
 
 
-@tf.function
 def rescale(image: tf.Tensor, scale: float, dtype=tf.float32, **kwargs) -> tf.Tensor:
     assert image.get_shape().ndims in (3, 4), 'The tensor must be of dimension 3 or 4'
 
     def get_scaled_size() -> tf.Tensor:
-        shape = tf.shape(image, out_type=tf.float32)
+        shape = tf.cast(tf.shape(image), tf.float32)
         shape = shape[:2] if image.get_shape().ndims == 3 else shape[1:3]
         return tf.cast(shape * scale, tf.int32)
 
@@ -60,7 +55,6 @@ def rescale(image: tf.Tensor, scale: float, dtype=tf.float32, **kwargs) -> tf.Te
     return tf.cast(rescaled_image, dtype)
 
 
-@tf.function
 def read_image(filename: str, **kwargs) -> tf.Tensor:
     stream = tf.io.read_file(filename)
     return tf.image.decode_image(stream, **kwargs)
