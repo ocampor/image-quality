@@ -42,7 +42,7 @@ setup(
     ],
     extras_require={
         'dev': [
-            'pytest',
+            'pytest>=4.4.0',
             'pytest-xdist'
         ]
     },
