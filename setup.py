@@ -43,8 +43,11 @@ setup(
     extras_require={
         'dev': [
             'pytest>=4.4.0',
-            'pytest-xdist'
-        ]
+            'pytest-xdist',
+        ],
+        'dataset': [
+            'tensorflow-datasets>=1.2.0',
+        ],
     },
     classifiers=[
         'Intended Audience :: Developers',
