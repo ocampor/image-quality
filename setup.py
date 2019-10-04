@@ -16,6 +16,7 @@ PROJECT_URLS = {
     'Bug Tracker': 'https://github.com/ocampor/image-quality/issues',
     'Source Code': 'https://github.com/ocampor/image-quality'
 }
+LONG_DESCRIPTION = 'text/x-rst'
 
 with open(os.path.join(ROOT_PATH, 'README.rst'), 'r') as readme:
     LONG_DESCRIPTION = readme.read()
@@ -27,6 +28,7 @@ setup(
     license=LICENSE,
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
+    long_description_content_type=LONG_DESCRIPTION,
     author=AUTHOR,
     author_email=AUTHOR_EMAIL,
     url=URL,
@@ -41,8 +43,7 @@ setup(
     extras_require={
         'dev': [
             'pytest',
-            'pytest-pep8',
-            'pytest-cov'
+            'pytest-xdist'
         ]
     },
     classifiers=[
