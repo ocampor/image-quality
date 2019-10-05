@@ -1,1 +1,1 @@
-recursive-include imquality/models *
+recursive-include imquality *.py *.txt *.pickle
