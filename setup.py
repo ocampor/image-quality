@@ -46,6 +46,7 @@ setup(
             'pytest-xdist',
         ],
         'dataset': [
+            'tensorflow>=2.0.0',
             'tensorflow-datasets>=1.2.0',
         ],
     },
