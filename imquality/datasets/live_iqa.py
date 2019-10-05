@@ -3,11 +3,9 @@ import os.path
 import tensorflow as tf
 import tensorflow_datasets.public_api as tfds
 
-from . import DATASETS_PATH
+from . import CHECKSUMS_PATH
 
-checksums_dir = os.path.join(DATASETS_PATH, 'url_checksums')
-checksums_dir = os.path.normpath(checksums_dir)
-tfds.download.add_checksums_dir(checksums_dir)
+tfds.download.add_checksums_dir(CHECKSUMS_PATH)
 
 CITATION = r"""
 @article{wang2004image,
@@ -32,7 +30,7 @@ distorted with different distortion types. These images were acquired in support
 project on generic shape matching and recognition.
 """
 URLS = ["https://live.ece.utexas.edu/research/quality/subjective.htm"]
-REDISTRIBUTION_INFO = """
+LICENSE = """
 -----------COPYRIGHT NOTICE STARTS WITH THIS LINE------------ 
 Copyright (c) 2003 The University of Texas at Austin 
 All rights reserved. 
@@ -52,7 +50,7 @@ The following input images are from the CD "Austin and Vicinity" by Visual Delig
 ( http://www.visualdelights.net ) coinsinfountain.bmp, dancers.bmp, flowersonih35.bmp, studentsculpture.bmp, carnivaldolls.bmp, cemetry.bmp, manfishing.bmp, churchandcapitol.bmp, building2.bmp These images were modified from the original (resized) and then compressed to obtain images in the database. Permission to release these images and their distorted versions was graciously granted by Visual Delights Inc. These images may not be used outside the scope of this database without their prior permission. The rest of the images were public domain Kodak PhotoCD images obtained from the Internet. 
 -----------COPYRIGHT NOTICE ENDS WITH THIS LINE------------
 """
-SUPERVISED_KEYS = ("distorted_image", "reference_image", "dmos")
+SUPERVISED_KEYS = ("distorted_image", "dmos")
 
 
 class LiveIQA(tfds.core.GeneratorBasedBuilder):
@@ -74,7 +72,9 @@ class LiveIQA(tfds.core.GeneratorBasedBuilder):
             supervised_keys=SUPERVISED_KEYS,
             urls=URLS,
             citation=CITATION,
-            redistribution_info=REDISTRIBUTION_INFO,
+            redistribution_info={
+                'license': LICENSE,
+            },
         )
 
     def _split_generators(self, manager):
