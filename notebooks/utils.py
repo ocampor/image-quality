@@ -33,25 +33,30 @@ def gaussian_kernel2d(kernel_size: int, sigma: float, dtype=tf.float32) -> tf.Te
 
 def gaussian_filter(image: tf.Tensor, kernel_size: int, sigma: float, dtype=tf.float32) -> tf.Tensor:
     kernel = gaussian_kernel2d(kernel_size, sigma)
-    original_shape = image.get_shape()
     if image.get_shape().ndims == 3:
         image = image[tf.newaxis, :, :, :]
     image = tf.cast(image, tf.float32)
     image = tf.nn.conv2d(image, kernel[:, :, tf.newaxis, tf.newaxis], strides=1, padding='SAME')
-    image = tf.reshape(image, original_shape)
     return tf.cast(image, dtype)
+
+
+def image_shape(image: tf.Tensor, dtype=tf.int32) -> tf.Tensor:
+    shape = tf.shape(image)
+    shape = shape[:2] if image.get_shape().ndims == 3 else shape[1:3]
+    return tf.cast(shape, dtype)
+
+
+def scale_shape(image: tf.Tensor, scale: float) -> tf.Tensor:
+    shape = image_shape(image, tf.float32)
+    shape = tf.math.ceil(shape * scale)
+    return tf.cast(shape, tf.int32)
 
 
 def rescale(image: tf.Tensor, scale: float, dtype=tf.float32, **kwargs) -> tf.Tensor:
     assert image.get_shape().ndims in (3, 4), 'The tensor must be of dimension 3 or 4'
 
-    def get_scaled_size() -> tf.Tensor:
-        shape = tf.cast(tf.shape(image), tf.float32)
-        shape = shape[:2] if image.get_shape().ndims == 3 else shape[1:3]
-        return tf.cast(shape * scale, tf.int32)
-
     image = tf.cast(image, tf.float32)
-    rescale_size = get_scaled_size()
+    rescale_size = scale_shape(image, scale)
     rescaled_image = tf.image.resize(image, size=rescale_size, **kwargs)
     return tf.cast(rescaled_image, dtype)
 
