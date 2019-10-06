@@ -1,4 +1,5 @@
 import math
+import typing
 
 import tensorflow as tf
 from matplotlib import pyplot as plt
@@ -60,9 +61,13 @@ def read_image(filename: str, **kwargs) -> tf.Tensor:
     return tf.image.decode_image(stream, **kwargs)
 
 
-def show_images(images: list, **kwargs):
+def show_images(images: typing.List[tf.Tensor], **kwargs):
     fig, axs = plt.subplots(1, len(images), figsize=(19, 10))
     for image, ax in zip(images, axs):
+        assert image.get_shape().ndims in (3, 4), 'The tensor must be of dimension 3 or 4'
+        if image.get_shape().ndims == 4:
+            image = tf.squeeze(image)
+
         _ = ax.imshow(image, **kwargs)
         ax.axis('off')
     fig.tight_layout()
