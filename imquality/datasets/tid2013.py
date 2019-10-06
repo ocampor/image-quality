@@ -3,6 +3,10 @@ import os.path
 import tensorflow as tf
 import tensorflow_datasets.public_api as tfds
 
+from . import CHECKSUMS_PATH
+
+tfds.download.add_checksums_dir(CHECKSUMS_PATH)
+
 CITATION = r"""
 @article{ponomarenko2015image,
   title={Image database TID2013: Peculiarities, results and perspectives},
