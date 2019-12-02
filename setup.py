@@ -56,6 +56,10 @@ setup(
         'Topic :: Scientific/Engineering :: Image Recognition',
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Operating System :: Microsoft :: Windows :: Windows 10',
+        'Operating System :: MacOS',
+        'Operating System :: POSIX :: Linux'
     ],
     include_package_data=True,
     python_requires=">=3.6",

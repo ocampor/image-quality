@@ -1,7 +1,7 @@
 git-commit := `git rev-parse --short HEAD`
 version := `python -c "import imquality; print(imquality.__version__)"`
 version-dev := ${version}-a${git-commit}
-python-docker-version := 3.7.4-slim
+python-docker-version := 3.8-slim
 
 build-images:
 	@echo "Building ocampor/image-quality:${version-dev} with python version ${python-docker-version}"
