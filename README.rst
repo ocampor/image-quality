@@ -20,9 +20,8 @@ Quality Assessment (IQA).
 Dependencies
 ------------
 
--  Python 3.7
--  LibSVM
--  (Optional) Docker
+-  Python 3.8
+-  (Development) Docker
 
 Installation
 ------------
@@ -51,12 +50,41 @@ terminal.
    >>> brisque.score(img)
    4.9541572815704455
 
-Report Bugs
+
+Development
 -----------
+
+In case of adding a new tensorflow dataset or modifying the location of a zip file, it is
+necessary to update the url checksums. You can find the instructions in the following
+`tensorflow documentation <https://www.tensorflow.org/datasets/add_dataset#1_adjust_the_checksums_directory>`_.
+
+The steps to create the url checksums are the following:
+
+1. Take the file with the dataset configuration (e.g. live_iqa.py) an place it in the ``tensorflow_datasets``
+folder. The folder is commonly placed in ``${HOME}/.local/lib/python3.8/site-packages`` if you
+install the python packages using the ``user`` flag.
+
+2. Modify the ``__init__.py`` of the ``tensorflow_datasets`` to import your new dataset.
+For example ``from .image.live_iqa import LiveIQA`` at the top of the file.
+
+3. In your terminal run the commands:
+::
+
+   touch url_checksums/live_iqa.txt
+   python -m tensorflow_datasets.scripts.download_and_prepare  \
+      --register_checksums  \
+      --datasets=live_iqa
+
+4. The file ``live_iqa.txt`` is going to contain the checksum. Now you can copy and paste it to your
+project's ``url_checksums`` folder.
+
+Sponsor
+-------
+
+.. image:: https://github.com/antonreshetov/mysigmail/raw/master/jetbrains.svg?sanitize=true
+   :target: <https://www.jetbrains.com/?from=mysigmail>_
 
 Maintainer
 ----------
 
--  Ricardo Ocampo - `me@ocampor.ai`_
-
-.. _me@ocampor.ai: me@ocampor.ai
+- `Ricardo Ocampo <https://ocampor.com>`_
