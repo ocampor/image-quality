@@ -1,1 +1,1 @@
-https://data.ocampor.ai/image-quality/live.zip 720535867 76dfff8f31e74f33622c13c5438b1f5fee9bc08736a127a85f1590e2a4cbe7fb
+http://data.ocampor.com/live.zip 720288700 b1740acb2d52a63fc81efe9f360ed4c1114f2a0ae493d930b9fa7dfa448adea1

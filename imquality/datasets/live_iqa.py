@@ -29,7 +29,7 @@ an extensive experiment was conducted to obtain scores from human subjects for a
 distorted with different distortion types. These images were acquired in support of a research 
 project on generic shape matching and recognition.
 """
-URLS = ["https://live.ece.utexas.edu/research/quality/subjective.htm"]
+URL = u"https://live.ece.utexas.edu/research/quality/subjective.htm"
 LICENSE = """
 -----------COPYRIGHT NOTICE STARTS WITH THIS LINE------------ 
 Copyright (c) 2003 The University of Texas at Austin 
@@ -70,7 +70,7 @@ class LiveIQA(tfds.core.GeneratorBasedBuilder):
                 "dmos_realigned_std": tf.float32,
             }),
             supervised_keys=SUPERVISED_KEYS,
-            urls=URLS,
+            homepage=URL,
             citation=CITATION,
             redistribution_info={
                 'license': LICENSE,
@@ -78,7 +78,7 @@ class LiveIQA(tfds.core.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, manager):
-        live_url = "https://data.ocampor.ai/image-quality/live.zip"
+        live_url = "http://data.ocampor.com/live.zip"
         extracted_path = manager.download_and_extract([live_url])
         images_path = os.path.join(extracted_path[0], "live")
 

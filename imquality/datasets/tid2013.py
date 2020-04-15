@@ -26,7 +26,7 @@ All images are saved in database in Bitmap format without any compression. File 
 organized in such a manner that they indicate a number of the reference image, 
 then a number of distortion's type, and, finally, a number of distortion's level: "iXX_YY_Z.bmp".
 """
-URLS = ["http://www.ponomarenko.info/tid2013.htm"]
+URL = u"http://www.ponomarenko.info/tid2013.htm"
 SUPERVISED_KEYS = ("distorted_image", "mos")
 
 
@@ -43,12 +43,12 @@ class Tid2013(tfds.core.GeneratorBasedBuilder):
                 "mos": tf.float32,
             }),
             supervised_keys=SUPERVISED_KEYS,
-            urls=URLS,
+            homepage=URL,
             citation=CITATION,
         )
 
     def _split_generators(self, manager):
-        tid2013 = "https://data.ocampor.ai/image-quality/tid2013.zip"
+        tid2013 = "http://data.ocampor.com/tid2013.zip"
         extracted_path = manager.download_and_extract([tid2013])
         images_path = os.path.join(extracted_path[0], "tid2013")
 
