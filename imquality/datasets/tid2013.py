@@ -48,7 +48,7 @@ class Tid2013(tfds.core.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, manager):
-        tid2013 = "https://data.ocampor.ai/image-quality/tid2013.zip"
+        tid2013 = "http://data.ocampor.com/tid2013.zip"
         extracted_path = manager.download_and_extract([tid2013])
         images_path = os.path.join(extracted_path[0], "tid2013")
 
