@@ -78,7 +78,7 @@ class LiveIQA(tfds.core.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, manager):
-        live_url = "https://data.ocampor.ai/image-quality/live.zip"
+        live_url = "http://data.ocampor.com/live.zip"
         extracted_path = manager.download_and_extract([live_url])
         images_path = os.path.join(extracted_path[0], "live")
 
