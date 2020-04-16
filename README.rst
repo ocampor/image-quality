@@ -78,6 +78,11 @@ For example ``from .image.live_iqa import LiveIQA`` at the top of the file.
 4. The file ``live_iqa.txt`` is going to contain the checksum. Now you can copy and paste it to your
 project's ``url_checksums`` folder.
 
+Sponsor
+-------
+
+.. image:: https://github.com/antonreshetov/mysigmail/raw/master/jetbrains.svg?sanitize=true
+   :target: <https://www.jetbrains.com/?from=mysigmail>_
 
 Maintainer
 ----------
