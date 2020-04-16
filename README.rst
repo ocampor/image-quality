@@ -20,9 +20,8 @@ Quality Assessment (IQA).
 Dependencies
 ------------
 
--  Python 3.7
--  LibSVM
--  (Optional) Docker
+-  Python 3.8
+-  (Development) Docker
 
 Installation
 ------------
@@ -60,13 +59,15 @@ necessary to update the url checksums. You can find the instructions in the foll
 `tensorflow documentation <https://www.tensorflow.org/datasets/add_dataset#1_adjust_the_checksums_directory>`_.
 
 The steps to create the url checksums are the following:
+
 1. Take the file with the dataset configuration (e.g. live_iqa.py) an place it in the ``tensorflow_datasets``
 folder. The folder is commonly placed in ``${HOME}/.local/lib/python3.8/site-packages`` if you
 install the python packages using the ``user`` flag.
+
 2. Modify the ``__init__.py`` of the ``tensorflow_datasets`` to import your new dataset.
 For example ``from .image.live_iqa import LiveIQA`` at the top of the file.
-3. In your terminal run the commands:
 
+3. In your terminal run the commands:
 ::
 
    touch url_checksums/live_iqa.txt
@@ -84,6 +85,4 @@ Report Bugs
 Maintainer
 ----------
 
--  Ricardo Ocampo - `me@ocampor.ai`_
-
-.. _me@ocampor.ai: me@ocampor.ai
+- `Ricardo Ocampo <https://ocampor.com>`_
