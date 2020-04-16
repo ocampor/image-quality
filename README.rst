@@ -79,9 +79,6 @@ For example ``from .image.live_iqa import LiveIQA`` at the top of the file.
 project's ``url_checksums`` folder.
 
 
-Report Bugs
------------
-
 Maintainer
 ----------
 
