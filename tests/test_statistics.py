@@ -42,8 +42,9 @@ def test_right_distribution(agg):
 
 
 def test_mean_squares():
-    assert (imquality.statistics.AsymmetricGeneralizedGaussian.mean_squares(DATA) ==
-            pytest.approx(0.6242857142857143, EPSILON))
+    assert imquality.statistics.AsymmetricGeneralizedGaussian.mean_squares(
+        DATA
+    ) == pytest.approx(0.6242857142857143, EPSILON)
 
 
 def test_r_hat(agg):
@@ -67,13 +68,17 @@ def test_gamma(agg):
 
 
 @pytest.mark.parametrize(
-    "alpha,expected", [
+    "alpha,expected",
+    [
         (1.2, 0.543103),
         (3, 0.684463405979725),
         (1.5515093216386946, 0.5951306268698388),
-    ])
+    ],
+)
 def test_phi(alpha, expected):
-    assert imquality.statistics.AsymmetricGeneralizedGaussian.phi(alpha) == pytest.approx(expected, EPSILON)
+    assert imquality.statistics.AsymmetricGeneralizedGaussian.phi(
+        alpha
+    ) == pytest.approx(expected, EPSILON)
 
 
 def test_estimate_alpha(agg):
@@ -95,7 +100,11 @@ def test_mean(initialized_agg):
 
 def test_gaussian_kernel2d():
     kernel = imquality.statistics.gaussian_kernel2d(3, 3)
-    expected = numpy.array([[0.107035, 0.113092, 0.107035],
-                            [0.113092, 0.119491, 0.113092],
-                            [0.107035, 0.113092, 0.107035]])
+    expected = numpy.array(
+        [
+            [0.107035, 0.113092, 0.107035],
+            [0.113092, 0.119491, 0.113092],
+            [0.107035, 0.113092, 0.107035],
+        ]
+    )
     assert kernel == pytest.approx(expected, 0.001)

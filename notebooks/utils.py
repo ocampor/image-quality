@@ -13,7 +13,9 @@ def image_normalization(image: tf.Tensor, new_min=0, new_max=255) -> tf.Tensor:
     image_max = tf.cast(tf.reduce_max(image), tf.float32)
     image = tf.cast(image, tf.float32)
 
-    normalized_image = (new_max - new_min) / (image_max - image_min) * (image - image_min) + new_min
+    normalized_image = (new_max - new_min) / (image_max - image_min) * (
+        image - image_min
+    ) + new_min
     return tf.cast(normalized_image, original_dtype)
 
 
@@ -27,16 +29,22 @@ def gaussian_kernel2d(kernel_size: int, sigma: float, dtype=tf.float32) -> tf.Te
     constant = tf.cast(tf.round(kernel_size / 2), dtype=dtype)
     x = tf.cast(x, dtype=dtype) - constant
     y = tf.cast(y, dtype=dtype) - constant
-    kernel = 1 / (2 * math.pi * sigma ** 2) * tf.exp(-(x ** 2 + y ** 2) / (2 * sigma ** 2))
+    kernel = (
+        1 / (2 * math.pi * sigma ** 2) * tf.exp(-(x ** 2 + y ** 2) / (2 * sigma ** 2))
+    )
     return normalize_kernel(kernel)
 
 
-def gaussian_filter(image: tf.Tensor, kernel_size: int, sigma: float, dtype=tf.float32) -> tf.Tensor:
+def gaussian_filter(
+    image: tf.Tensor, kernel_size: int, sigma: float, dtype=tf.float32
+) -> tf.Tensor:
     kernel = gaussian_kernel2d(kernel_size, sigma)
     if image.get_shape().ndims == 3:
         image = image[tf.newaxis, :, :, :]
     image = tf.cast(image, tf.float32)
-    image = tf.nn.conv2d(image, kernel[:, :, tf.newaxis, tf.newaxis], strides=1, padding='SAME')
+    image = tf.nn.conv2d(
+        image, kernel[:, :, tf.newaxis, tf.newaxis], strides=1, padding="SAME"
+    )
     return tf.cast(image, dtype)
 
 
@@ -53,7 +61,7 @@ def scale_shape(image: tf.Tensor, scale: float) -> tf.Tensor:
 
 
 def rescale(image: tf.Tensor, scale: float, dtype=tf.float32, **kwargs) -> tf.Tensor:
-    assert image.get_shape().ndims in (3, 4), 'The tensor must be of dimension 3 or 4'
+    assert image.get_shape().ndims in (3, 4), "The tensor must be of dimension 3 or 4"
 
     image = tf.cast(image, tf.float32)
     rescale_size = scale_shape(image, scale)
@@ -69,10 +77,13 @@ def read_image(filename: str, **kwargs) -> tf.Tensor:
 def show_images(images: typing.List[tf.Tensor], **kwargs):
     fig, axs = plt.subplots(1, len(images), figsize=(19, 10))
     for image, ax in zip(images, axs):
-        assert image.get_shape().ndims in (3, 4), 'The tensor must be of dimension 3 or 4'
+        assert image.get_shape().ndims in (
+            3,
+            4,
+        ), "The tensor must be of dimension 3 or 4"
         if image.get_shape().ndims == 4:
             image = tf.squeeze(image)
 
         _ = ax.imshow(image, **kwargs)
-        ax.axis('off')
+        ax.axis("off")
     fig.tight_layout()

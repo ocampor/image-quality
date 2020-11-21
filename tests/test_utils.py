@@ -9,7 +9,7 @@ from tests import TEST_PATH
 
 @pytest.fixture
 def image() -> PIL.Image.Image:
-    return load_image(os.path.join(TEST_PATH, 'resources', 'kodim05.png'))
+    return load_image(os.path.join(TEST_PATH, "resources", "kodim05.png"))
 
 
 def test_load_image(image: PIL.Image.Image):
