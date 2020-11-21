@@ -1,5 +1,5 @@
 unit_tests() {
-  pytest -n auto
+  pytest
 }
 
 lower() {
