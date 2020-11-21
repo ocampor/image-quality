@@ -29,7 +29,7 @@ class AsymmetricGeneralizedGaussian:
         elif side == DistributionSide.right:
             idx = numpy.where(self.x >= 0)
         else:
-            raise ValueError(f'Side {side} was not recognized')
+            raise ValueError(f"Side {side} was not recognized")
 
         return self.x[idx]
 
@@ -47,7 +47,7 @@ class AsymmetricGeneralizedGaussian:
         elif side == DistributionSide.left:
             _x = self.x_left
         else:
-            raise ValueError(f'Side {side} was not recognized')
+            raise ValueError(f"Side {side} was not recognized")
 
         return numpy.sqrt(self.mean_squares(_x))
 
@@ -69,21 +69,36 @@ class AsymmetricGeneralizedGaussian:
 
     @property
     def R_hat(self):
-        return self.r_hat * (self.gamma ** 3 + 1) * (self.gamma + 1) / (self.gamma ** 2 + 1) ** 2
+        return (
+            self.r_hat
+            * (self.gamma ** 3 + 1)
+            * (self.gamma + 1)
+            / (self.gamma ** 2 + 1) ** 2
+        )
 
     @property
     def constant(self):
-        return numpy.sqrt(scipy.special.gamma(1 / self.alpha) / scipy.special.gamma(3 / self.alpha))
+        return numpy.sqrt(
+            scipy.special.gamma(1 / self.alpha) / scipy.special.gamma(3 / self.alpha)
+        )
 
     @property
     def mean(self):
-        return (self.sigma_right - self.sigma_left) * self.constant * (
-                scipy.special.gamma(2 / self.alpha) / scipy.special.gamma(1 / self.alpha))
+        return (
+            (self.sigma_right - self.sigma_left)
+            * self.constant
+            * (
+                scipy.special.gamma(2 / self.alpha)
+                / scipy.special.gamma(1 / self.alpha)
+            )
+        )
 
     @property
     def alpha(self):
         if self._alpha is None:
-            raise NotImplementedError('The distribution has no alpha estimated. Run method fit() to calculate.')
+            raise NotImplementedError(
+                "The distribution has no alpha estimated. Run method fit() to calculate."
+            )
         return self._alpha
 
     @staticmethod
@@ -92,8 +107,9 @@ class AsymmetricGeneralizedGaussian:
 
     @staticmethod
     def phi(alpha):
-        return (scipy.special.gamma(2 / alpha) ** 2 /
-                (scipy.special.gamma(1 / alpha) * scipy.special.gamma(3 / alpha)))
+        return scipy.special.gamma(2 / alpha) ** 2 / (
+            scipy.special.gamma(1 / alpha) * scipy.special.gamma(3 / alpha)
+        )
 
     def estimate_alpha(self, x0: float = 0.2) -> float:
         try:
@@ -101,9 +117,11 @@ class AsymmetricGeneralizedGaussian:
             assert solution.success
             return solution.x.item()
         except ValueError:
-            raise ValueError(f'More than one solution was found for phi(alpha) - {self.R_hat}')
+            raise ValueError(
+                f"More than one solution was found for phi(alpha) - {self.R_hat}"
+            )
 
-    def fit(self, x0: float = 0.2) -> 'AsymmetricGeneralizedGaussian':
+    def fit(self, x0: float = 0.2) -> "AsymmetricGeneralizedGaussian":
         self._alpha = self.estimate_alpha(x0)
         return self
 
@@ -114,5 +132,9 @@ def normalize_kernel(kernel: numpy.ndarray) -> numpy.ndarray:
 
 def gaussian_kernel2d(kernel_size, sigma: float):
     y, x = numpy.indices((kernel_size, kernel_size)) - int(kernel_size / 2)
-    kernel = 1 / (2 * numpy.pi * sigma ** 2) * numpy.exp(-(x ** 2 + y ** 2) / (2 * sigma ** 2))
+    kernel = (
+        1
+        / (2 * numpy.pi * sigma ** 2)
+        * numpy.exp(-(x ** 2 + y ** 2) / (2 * sigma ** 2))
+    )
     return normalize_kernel(kernel)

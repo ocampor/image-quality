@@ -108,3 +108,4 @@ venv.bak/
 
 # Mac Files
 .DS_Store
+.vscode/settings.json
