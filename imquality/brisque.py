@@ -42,7 +42,10 @@ class Brisque:
         sigma: float = 7 / 6,
     ):
         self.image = pil2ndarray(image)
-        self.image = skimage.color.rgb2gray(self.image)
+
+        if self.image.shape[-1] == 3:
+            self.image = skimage.color.rgb2gray(self.image)
+
         self.kernel_size = kernel_size
         self.sigma = sigma
         self.kernel = gaussian_kernel2d(kernel_size, sigma)
