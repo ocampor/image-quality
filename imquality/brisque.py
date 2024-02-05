@@ -162,3 +162,28 @@ def predict(features: numpy.ndarray) -> float:
 def score(image: PIL.Image.Image, kernel_size=7, sigma=7 / 6) -> float:
     scaled_features = calculate_features(image, kernel_size, sigma)
     return predict(scaled_features)
+
+def score_normal(image: PIL.Image.Image, kernel_size=7, sigma=7 / 6):
+    scaled_features = calculate_features(image, kernel_size, sigma)
+    raw_score = predict(scaled_features)
+
+    # Replace min_raw_score and max_raw_score with the actual minimum and maximum values
+    min_raw_score = 1.0  # Replace with the actual minimum raw score
+    max_raw_score = 200.0  # Replace with the actual maximum raw score
+
+    # Normalize the raw score to the range [0, 1]
+    normalized_score = (raw_score - min_raw_score) / (max_raw_score - min_raw_score)
+
+    # Map the normalized score to the range [1, 10]
+    mapped_score = normalized_score * 9 + 1
+
+    # Ensure the mapped score is within the desired range
+    mapped_score = max(1, min(10, mapped_score))
+
+    # Round to the nearest integer
+    rounded_mapped_score = round(mapped_score)
+
+    print(f"Raw Score: {raw_score}")
+    print(f"Mapped Score: {rounded_mapped_score}")
+
+    return rounded_mapped_score
